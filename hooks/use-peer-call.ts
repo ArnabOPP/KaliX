@@ -18,7 +18,7 @@ export interface PeerCallState {
 
 export function usePeerCall(roomId: string) {
   const channelName = useMemo(() => `comm-center`, [])
-  const signalChannelRef = useRef<BroadcastChannel | null>(null)
+  const signalChannelRef = useRef<EventSource | null>(null)
   const signalChannelNameRef = useRef<string | null>(null)
   const currentRoomRef = useRef<string>(roomId)
   const remoteDescSetRef = useRef<boolean>(false)
@@ -52,10 +52,10 @@ export function usePeerCall(roomId: string) {
   const ensureSignal = useCallback(() => {
     if (!signalChannelRef.current || signalChannelNameRef.current !== channelName) {
       signalChannelRef.current?.close()
-      signalChannelRef.current = new BroadcastChannel(channelName)
+      signalChannelRef.current = new EventSource("/api/signaling")
       signalChannelNameRef.current = channelName
       signalChannelRef.current.onmessage = async (ev) => {
-        const msg = ev.data as SignalMessage
+        const msg = JSON.parse(ev.data) as SignalMessage
         const incomingRoom = msg.roomId
         const currentRoom = currentRoomRef.current
         if (currentRoom === "idle") {
@@ -74,7 +74,7 @@ export function usePeerCall(roomId: string) {
           }
           const answer = await pcRef.current.createAnswer()
           await pcRef.current.setLocalDescription(answer)
-          signalChannelRef.current?.postMessage({ type: "answer", sdp: answer, roomId: currentRoomRef.current } as SignalMessage)
+          await fetch("/api/signaling", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "answer", sdp: answer, roomId: currentRoomRef.current }) })
           setState((s) => ({ ...s, inCall: true }))
         } else if (msg.type === "answer") {
           if (!pcRef.current) return
@@ -110,8 +110,9 @@ export function usePeerCall(roomId: string) {
       pcRef.current = pc
 
       pc.onicecandidate = (e) => {
-        if (e.candidate)
-          signalChannelRef.current?.postMessage({ type: "candidate", candidate: e.candidate.toJSON(), roomId: currentRoomRef.current } as SignalMessage)
+        if (e.candidate) {
+          fetch("/api/signaling", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "candidate", candidate: e.candidate.toJSON(), roomId: currentRoomRef.current }) })
+        }
       }
 
       pc.ontrack = (e) => {
@@ -166,11 +167,11 @@ export function usePeerCall(roomId: string) {
     setState((s) => ({ ...s, inCall: true }))
     const offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
-    signalChannelRef.current?.postMessage({ type: "offer", sdp: offer, roomId: currentRoomRef.current } as SignalMessage)
+    await fetch("/api/signaling", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "offer", sdp: offer, roomId: currentRoomRef.current }) })
   }, [createPeer, ensureSignal, roomId])
 
   const endCall = useCallback(() => {
-    signalChannelRef.current?.postMessage({ type: "end", roomId: currentRoomRef.current } as SignalMessage)
+    fetch("/api/signaling", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ type: "end", roomId: currentRoomRef.current }) })
     reset()
     currentRoomRef.current = "idle"
     remoteDescSetRef.current = false

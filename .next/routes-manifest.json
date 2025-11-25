@@ -46,6 +46,12 @@
       "namedRegex": "^/api/chat(?:/)?$"
     },
     {
+      "page": "/api/signaling",
+      "regex": "^/api/signaling(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/signaling(?:/)?$"
+    },
+    {
       "page": "/login",
       "regex": "^/login(?:/)?$",
       "routeKeys": {},
