@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 
 type SignalMessage =
-  | { type: "offer"; sdp: RTCSessionDescriptionInit }
-  | { type: "answer"; sdp: RTCSessionDescriptionInit }
-  | { type: "candidate"; candidate: RTCIceCandidateInit }
-  | { type: "end" }
+  | { type: "offer"; sdp: RTCSessionDescriptionInit; roomId: string }
+  | { type: "answer"; sdp: RTCSessionDescriptionInit; roomId: string }
+  | { type: "candidate"; candidate: RTCIceCandidateInit; roomId: string }
+  | { type: "end"; roomId: string }
 
 export interface PeerCallState {
   localStream: MediaStream | null
@@ -17,9 +17,10 @@ export interface PeerCallState {
 }
 
 export function usePeerCall(roomId: string) {
-  const channelName = useMemo(() => `comm-center-${roomId}`, [roomId])
+  const channelName = useMemo(() => `comm-center`, [])
   const signalChannelRef = useRef<BroadcastChannel | null>(null)
   const signalChannelNameRef = useRef<string | null>(null)
+  const currentRoomRef = useRef<string>(roomId)
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const dcRef = useRef<RTCDataChannel | null>(null)
   const localStreamRef = useRef<MediaStream | null>(null)
@@ -53,13 +54,21 @@ export function usePeerCall(roomId: string) {
       signalChannelNameRef.current = channelName
       signalChannelRef.current.onmessage = async (ev) => {
         const msg = ev.data as SignalMessage
+        const incomingRoom = msg.roomId
+        const currentRoom = currentRoomRef.current
+        if (currentRoom === "idle") {
+          currentRoomRef.current = incomingRoom
+        }
+        if (incomingRoom !== currentRoomRef.current) return
+
         if (msg.type === "offer") {
           if (!pcRef.current) await createPeer(false)
           if (!pcRef.current) return
           await pcRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp))
           const answer = await pcRef.current.createAnswer()
           await pcRef.current.setLocalDescription(answer)
-          signalChannelRef.current?.postMessage({ type: "answer", sdp: answer } satisfies SignalMessage)
+          signalChannelRef.current?.postMessage({ type: "answer", sdp: answer, roomId: currentRoomRef.current } as SignalMessage)
+          setState((s) => ({ ...s, inCall: true }))
         } else if (msg.type === "answer") {
           if (!pcRef.current) return
           await pcRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp))
@@ -85,7 +94,8 @@ export function usePeerCall(roomId: string) {
       pcRef.current = pc
 
       pc.onicecandidate = (e) => {
-        if (e.candidate) signalChannelRef.current?.postMessage({ type: "candidate", candidate: e.candidate.toJSON() } satisfies SignalMessage)
+        if (e.candidate)
+          signalChannelRef.current?.postMessage({ type: "candidate", candidate: e.candidate.toJSON(), roomId: currentRoomRef.current } as SignalMessage)
       }
 
       pc.ontrack = (e) => {
@@ -129,17 +139,19 @@ export function usePeerCall(roomId: string) {
   )
 
   const startCall = useCallback(async () => {
+    currentRoomRef.current = roomId
     ensureSignal()
     const pc = await createPeer(true)
     setState((s) => ({ ...s, inCall: true }))
     const offer = await pc.createOffer()
     await pc.setLocalDescription(offer)
-    signalChannelRef.current?.postMessage({ type: "offer", sdp: offer } satisfies SignalMessage)
-  }, [createPeer, ensureSignal])
+    signalChannelRef.current?.postMessage({ type: "offer", sdp: offer, roomId: currentRoomRef.current } as SignalMessage)
+  }, [createPeer, ensureSignal, roomId])
 
   const endCall = useCallback(() => {
-    signalChannelRef.current?.postMessage({ type: "end" } satisfies SignalMessage)
+    signalChannelRef.current?.postMessage({ type: "end", roomId: currentRoomRef.current } as SignalMessage)
     reset()
+    currentRoomRef.current = "idle"
   }, [reset])
 
   const toggleAudio = useCallback(() => {
@@ -190,6 +202,7 @@ export function usePeerCall(roomId: string) {
   }, [])
 
   useEffect(() => {
+    currentRoomRef.current = roomId
     ensureSignal()
     return () => {
       signalChannelRef.current?.close()
@@ -197,7 +210,7 @@ export function usePeerCall(roomId: string) {
       signalChannelNameRef.current = null
       reset()
     }
-  }, [ensureSignal, reset])
+  }, [ensureSignal, reset, roomId])
 
   return {
     state,
