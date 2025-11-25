@@ -103,11 +103,14 @@ export function usePeerCall(roomId: string, selfId: string) {
 
   const createPeer = useCallback(
     async (initiator: boolean) => {
-      const pc = new RTCPeerConnection({
-        iceServers: [
-          { urls: ["stun:stun.l.google.com:19302", "stun:global.stun.twilio.com:3478"] },
-        ],
-      })
+      const iceServers: RTCIceServer[] = [
+        { urls: ["stun:stun.l.google.com:19302", "stun:global.stun.twilio.com:3478"] },
+      ]
+      const turnUrls = (process.env.NEXT_PUBLIC_TURN_URL || "").split(",").map((u) => u.trim()).filter(Boolean)
+      if (turnUrls.length) {
+        iceServers.push({ urls: turnUrls, username: process.env.NEXT_PUBLIC_TURN_USERNAME, credential: process.env.NEXT_PUBLIC_TURN_PASSWORD })
+      }
+      const pc = new RTCPeerConnection({ iceServers })
       pcRef.current = pc
 
       pc.onicecandidate = (e) => {
@@ -151,6 +154,8 @@ export function usePeerCall(roomId: string, selfId: string) {
         }
       }
 
+      pc.addTransceiver("audio", { direction: "sendrecv" })
+      pc.addTransceiver("video", { direction: "sendrecv" })
       const constraints: MediaStreamConstraints = { audio: true, video: true }
       const local = await navigator.mediaDevices.getUserMedia(constraints)
       localStreamRef.current = local

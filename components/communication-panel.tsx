@@ -242,11 +242,11 @@ export default function CommunicationPanel() {
               {state.videoOn && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   <div className="aspect-video bg-black border-2 border-primary/50 rounded overflow-hidden relative">
-                    <video ref={localVideoRef} className="w-full h-full object-cover" playsInline />
+                    <video ref={localVideoRef} className="w-full h-full object-cover" playsInline autoPlay />
                   </div>
                   {state.remoteStream && (
                     <div className="aspect-video bg-black border-2 border-primary/50 rounded overflow-hidden relative">
-                      <video ref={remoteVideoRef} className="w-full h-full object-cover" playsInline />
+                      <video ref={remoteVideoRef} className="w-full h-full object-cover" playsInline autoPlay />
                     </div>
                   )}
                 </div>
