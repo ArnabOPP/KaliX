@@ -21,6 +21,8 @@ export function usePeerCall(roomId: string) {
   const signalChannelRef = useRef<BroadcastChannel | null>(null)
   const signalChannelNameRef = useRef<string | null>(null)
   const currentRoomRef = useRef<string>(roomId)
+  const remoteDescSetRef = useRef<boolean>(false)
+  const pendingCandidatesRef = useRef<RTCIceCandidateInit[]>([])
   const pcRef = useRef<RTCPeerConnection | null>(null)
   const dcRef = useRef<RTCDataChannel | null>(null)
   const localStreamRef = useRef<MediaStream | null>(null)
@@ -64,19 +66,33 @@ export function usePeerCall(roomId: string) {
         if (msg.type === "offer") {
           if (!pcRef.current) await createPeer(false)
           if (!pcRef.current) return
-          await pcRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp))
+          await pcRef.current.setRemoteDescription(msg.sdp)
+          remoteDescSetRef.current = true
+          while (pendingCandidatesRef.current.length) {
+            const c = pendingCandidatesRef.current.shift()!
+            try { await pcRef.current.addIceCandidate(c) } catch {}
+          }
           const answer = await pcRef.current.createAnswer()
           await pcRef.current.setLocalDescription(answer)
           signalChannelRef.current?.postMessage({ type: "answer", sdp: answer, roomId: currentRoomRef.current } as SignalMessage)
           setState((s) => ({ ...s, inCall: true }))
         } else if (msg.type === "answer") {
           if (!pcRef.current) return
-          await pcRef.current.setRemoteDescription(new RTCSessionDescription(msg.sdp))
+          await pcRef.current.setRemoteDescription(msg.sdp)
+          remoteDescSetRef.current = true
+          while (pendingCandidatesRef.current.length) {
+            const c = pendingCandidatesRef.current.shift()!
+            try { await pcRef.current.addIceCandidate(c) } catch {}
+          }
         } else if (msg.type === "candidate") {
           if (!pcRef.current) return
-          try {
-            await pcRef.current.addIceCandidate(new RTCIceCandidate(msg.candidate))
-          } catch {}
+          if (!remoteDescSetRef.current) {
+            pendingCandidatesRef.current.push(msg.candidate)
+          } else {
+            try {
+              await pcRef.current.addIceCandidate(msg.candidate)
+            } catch {}
+          }
         } else if (msg.type === "end") {
           reset()
         }
@@ -99,10 +115,15 @@ export function usePeerCall(roomId: string) {
       }
 
       pc.ontrack = (e) => {
-        const stream = remoteStreamRef.current ?? new MediaStream()
-        remoteStreamRef.current = stream
-        e.streams[0]?.getTracks().forEach((t) => stream.addTrack(t))
-        setState((s) => ({ ...s, remoteStream: stream }))
+        if (e.streams && e.streams[0]) {
+          remoteStreamRef.current = e.streams[0]
+          setState((s) => ({ ...s, remoteStream: e.streams[0] }))
+        } else {
+          const stream = remoteStreamRef.current ?? new MediaStream()
+          remoteStreamRef.current = stream
+          stream.addTrack(e.track)
+          setState((s) => ({ ...s, remoteStream: stream }))
+        }
       }
 
       pc.ondatachannel = (e) => {
@@ -152,6 +173,8 @@ export function usePeerCall(roomId: string) {
     signalChannelRef.current?.postMessage({ type: "end", roomId: currentRoomRef.current } as SignalMessage)
     reset()
     currentRoomRef.current = "idle"
+    remoteDescSetRef.current = false
+    pendingCandidatesRef.current = []
   }, [reset])
 
   const toggleAudio = useCallback(() => {
