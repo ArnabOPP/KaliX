@@ -37,7 +37,8 @@ export default function CommunicationPanel() {
     return pair
   }, [user, selectedContact])
 
-  const { state, startCall, endCall, toggleAudio, toggleVideo, startScreenShare, stopScreenShare, sendMessage } = usePeerCall(roomId)
+  const selfId = user?.email || ""
+  const { state, startCall, endCall, toggleAudio, toggleVideo, startScreenShare, stopScreenShare, sendMessage } = usePeerCall(roomId, selfId)
 
   const localVideoRef = useRef<HTMLVideoElement | null>(null)
   const remoteVideoRef = useRef<HTMLVideoElement | null>(null)
