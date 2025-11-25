@@ -1,8 +1,11 @@
 const subscribers: Set<ReadableStreamDefaultController> = new Set()
+const pings = new Map<ReadableStreamDefaultController, NodeJS.Timeout>()
 
 export async function GET() {
+  let controllerRef: ReadableStreamDefaultController | null = null
   const stream = new ReadableStream({
     start(controller) {
+      controllerRef = controller
       subscribers.add(controller)
       // Initial hello to open the stream
       controller.enqueue(new TextEncoder().encode(`event: open\ndata: "ok"\n\n`))
@@ -11,9 +14,17 @@ export async function GET() {
           controller.enqueue(new TextEncoder().encode(`event: ping\ndata: ${Date.now()}\n\n`))
         } catch {}
       }, 25000)
-      ;(controller as any)._ping = ping
+      pings.set(controller, ping)
     },
-    cancel() {},
+    cancel() {
+      if (controllerRef) {
+        const t = pings.get(controllerRef)
+        if (t) clearInterval(t)
+        pings.delete(controllerRef)
+        subscribers.delete(controllerRef)
+        controllerRef = null
+      }
+    },
   })
 
   return new Response(stream, {
@@ -42,3 +53,4 @@ export async function POST(req: Request) {
   }
 }
 
+export const dynamic = "force-dynamic"
