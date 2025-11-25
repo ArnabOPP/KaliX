@@ -1,0 +1,176 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Professional Hacking Software Theme */
+  --background: #0a0e27;
+  --foreground: #e0e6ed;
+  --card: #0f1629;
+  --card-foreground: #e0e6ed;
+  --popover: #0f1629;
+  --popover-foreground: #e0e6ed;
+  --primary: #00d9ff;
+  --primary-foreground: #0a0e27;
+  --secondary: #1a1f3a;
+  --secondary-foreground: #e0e6ed;
+  --muted: #1a1f3a;
+  --muted-foreground: #8b92a8;
+  --accent: #00ff88;
+  --accent-foreground: #0a0e27;
+  --destructive: #ff3366;
+  --destructive-foreground: #e0e6ed;
+  --border: #1a2847;
+  --input: #0f1629;
+  --ring: #00d9ff;
+  --chart-1: #00d9ff;
+  --chart-2: #00ff88;
+  --chart-3: #ff3366;
+  --chart-4: #ffa500;
+  --chart-5: #9d4edd;
+  --radius: 0.375rem;
+  --sidebar: #0a0e27;
+  --sidebar-foreground: #e0e6ed;
+  --sidebar-primary: #00d9ff;
+  --sidebar-primary-foreground: #0a0e27;
+  --sidebar-accent: #00ff88;
+  --sidebar-accent-foreground: #0a0e27;
+  --sidebar-border: #1a2847;
+  --sidebar-ring: #00d9ff;
+}
+
+.dark {
+  --background: #0a0e27;
+  --foreground: #e0e6ed;
+  --card: #0f1629;
+  --card-foreground: #e0e6ed;
+  --popover: #0f1629;
+  --popover-foreground: #e0e6ed;
+  --primary: #00d9ff;
+  --primary-foreground: #0a0e27;
+  --secondary: #1a1f3a;
+  --secondary-foreground: #e0e6ed;
+  --muted: #1a1f3a;
+  --muted-foreground: #8b92a8;
+  --accent: #00ff88;
+  --accent-foreground: #0a0e27;
+  --destructive: #ff3366;
+  --destructive-foreground: #e0e6ed;
+  --border: #1a2847;
+  --input: #0f1629;
+  --ring: #00d9ff;
+  --chart-1: #00d9ff;
+  --chart-2: #00ff88;
+  --chart-3: #ff3366;
+  --chart-4: #ffa500;
+  --chart-5: #9d4edd;
+  --sidebar: #0a0e27;
+  --sidebar-foreground: #e0e6ed;
+  --sidebar-primary: #00d9ff;
+  --sidebar-primary-foreground: #0a0e27;
+  --sidebar-accent: #00ff88;
+  --sidebar-accent-foreground: #0a0e27;
+  --sidebar-border: #1a2847;
+  --sidebar-ring: #00d9ff;
+}
+
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Geist Mono", "Geist Mono Fallback";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-mono;
+  }
+
+  /* Added professional hacking software animations */
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 8px rgba(0, 217, 255, 0.2), inset 0 0 8px rgba(0, 217, 255, 0.05);
+    }
+    50% {
+      box-shadow: 0 0 16px rgba(0, 217, 255, 0.4), inset 0 0 12px rgba(0, 217, 255, 0.1);
+    }
+  }
+
+  @keyframes data-scan {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes matrix-rain {
+    0% {
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  .glow-card {
+    border-color: rgba(0, 217, 255, 0.2);
+    background: rgba(15, 22, 41, 0.8);
+    box-shadow: 0 0 8px rgba(0, 217, 255, 0.1), inset 0 0 8px rgba(0, 217, 255, 0.02);
+    animation: glow-pulse 3s ease-in-out infinite;
+  }
+
+  .glow-card:hover {
+    border-color: rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 16px rgba(0, 217, 255, 0.3), inset 0 0 12px rgba(0, 217, 255, 0.05);
+  }
+}

@@ -1,0 +1,83 @@
+[00:00:01.798] Server  LOG      ✓ Ready in 1130ms
+[00:00:08.964] Server  LOG      ○ Compiling / ...
+[00:00:12.350] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:00:13.100] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:13.360] Browser ERROR   uncaughtError: Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+
+- A server/client branch `if (typeof window !== 'undefined')`.
+- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
+- Date formatting in a user's locale which doesn't match the server.
+- External changing data without sending a snapshot of it along with the HTML.
+- Invalid HTML tag nesting.
+
+It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+
+https://react.dev/link/hydration-mismatch
+
+  ...
+    <InnerLayoutRouter url="/" tree={[...]} params={{}} cacheNode={{lazyData:null, ...}} segmentPath={[...]} ...>
+      <SegmentViewNode type="page" pagePath="page.tsx">
+        <SegmentTrieNode>
+        <ClientPageRoot Component={function Home} serverProvidedParams={{...}}>
+          <Home params={Promise} searchParams={Promise}>
+            <div className="min-h-scre...">
+              <div>
+              <Header>
+              <main className="relative z-10">
+                <div className="p-4 lg:p-6...">
+                  <div>
+                  <div className="grid grid-...">
+                    <div className="lg:col-span-2">
+                      <PerformancePanel systemData={{time:"2:33...", ...}}>
+                        <div className="glow-card ...">
+                          <div className="flex items...">
+                            <div>
+                            <div className="text-right">
+                              <div className="text-2xl font-mono font-bold text-primary">
++                               2:33:24 AM
+-                               2:33:23 am
+                              ...
+                          ...
+                    ...
+                  ...
+      ...
+
+[00:00:13.536] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:13.536] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:13.536] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:13.536] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764104604448}
+[00:00:13.536] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764104604448}
+[00:00:14.495] Server  WARN     ⚠ Unsupported metadata viewport is configured in metadata export in /login. Please move it to viewport export instead.
+Read more: https://nextjs.org/docs/app/api-reference/functions/generate-viewport
+[00:00:14.684] Browser LOG     [v0] Loading users from CSV...
+[00:00:14.684] Browser LOG     [v0] Fetching CSV from: https://docs.google.com/spreadsheets/d/e/2PACX-1vSoUrbuhtYLt8rgvqUa50dR1t8xYvrZvIZE0HXP3otUOEKICNi52AaKMs1W_sKcnTEsJlYNnRRcq1Qr/pub?gid=0&single=true&output=csv
+[00:00:14.684] Browser LOG     [v0] Loading users from CSV...
+[00:00:14.684] Browser LOG     [v0] Fetching CSV from: https://docs.google.com/spreadsheets/d/e/2PACX-1vSoUrbuhtYLt8rgvqUa50dR1t8xYvrZvIZE0HXP3otUOEKICNi52AaKMs1W_sKcnTEsJlYNnRRcq1Qr/pub?gid=0&single=true&output=csv
+[00:00:14.684] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/login color: rgb(120, 120, 120) color: inherit {"dp":"/login","o":"http://localhost:3000/login","sdkn":"@vercel/analytics/next","sdkv":"1.5.0","sv":"0.1.3","ts":1764104605602}
+[00:00:16.361] Browser LOG     [v0] CSV response length: 182
+[00:00:16.361] Browser LOG     [v0] First 500 chars: email,password,name,status,contact
+arjundutt01238@gmail.com,Ar1234R@,Aranya Rath,Online,8274090864
+arnabchatterjee281205@gmail.com,ArnabintheChat,Arnab Chatterjee,Online,6290623636
+[00:00:16.361] Browser LOG     [v0] CSV lines count: 3
+[00:00:16.361] Browser LOG     [v0] First line (headers): email,password,name,status,contact
+[00:00:16.361] Browser LOG     [v0] Parsed headers: ["email","password","name","status","contact"]
+[00:00:16.361] Browser LOG     [v0] Row 2: arjundutt01238@gmail.com
+[00:00:16.361] Browser LOG     [v0] Row 3: arnabchatterjee281205@gmail.com
+[00:00:16.361] Browser LOG     [v0] Total records parsed: 2
+[00:00:16.361] Browser LOG     [v0] Processed users count: 2
+[00:00:16.361] Browser LOG     [v0] Processed users: [{"email":"arjundutt01238@gmail.com","name":"Aranya Rath","password":"Ar1234R@","phone":"8274090864","status":"online"},{"email":"arnabchatterjee281205@gmail.com","name":"Arnab Chatterjee","password":"ArnabintheChat","phone":"6290623636","status":"online"}]
+[00:00:16.361] Browser LOG     [v0] Loaded users: [{"email":"arjundutt01238@gmail.com","name":"Aranya Rath","password":"Ar1234R@","phone":"8274090864","status":"online"},{"email":"arnabchatterjee281205@gmail.com","name":"Arnab Chatterjee","password":"ArnabintheChat","phone":"6290623636","status":"online"}]
+[00:00:16.465] Browser LOG     [v0] CSV response length: 182
+[00:00:16.465] Browser LOG     [v0] First 500 chars: email,password,name,status,contact
+arjundutt01238@gmail.com,Ar1234R@,Aranya Rath,Online,8274090864
+arnabchatterjee281205@gmail.com,ArnabintheChat,Arnab Chatterjee,Online,6290623636
+[00:00:16.465] Browser LOG     [v0] CSV lines count: 3
+[00:00:16.465] Browser LOG     [v0] First line (headers): email,password,name,status,contact
+[00:00:16.465] Browser LOG     [v0] Parsed headers: ["email","password","name","status","contact"]
+[00:00:16.465] Browser LOG     [v0] Row 2: arjundutt01238@gmail.com
+[00:00:16.465] Browser LOG     [v0] Row 3: arnabchatterjee281205@gmail.com
+[00:00:16.465] Browser LOG     [v0] Total records parsed: 2
+[00:00:16.465] Browser LOG     [v0] Processed users count: 2
+[00:00:16.465] Browser LOG     [v0] Processed users: [{"email":"arjundutt01238@gmail.com","name":"Aranya Rath","password":"Ar1234R@","phone":"8274090864","status":"online"},{"email":"arnabchatterjee281205@gmail.com","name":"Arnab Chatterjee","password":"ArnabintheChat","phone":"6290623636","status":"online"}]
+[00:00:16.465] Browser LOG     [v0] Loaded users: [{"email":"arjundutt01238@gmail.com","name":"Aranya Rath","password":"Ar1234R@","phone":"8274090864","status":"online"},{"email":"arnabchatterjee281205@gmail.com","name":"Arnab Chatterjee","password":"ArnabintheChat","phone":"6290623636","status":"online"}]
